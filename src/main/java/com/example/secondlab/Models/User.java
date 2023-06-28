@@ -1,10 +1,10 @@
 package com.example.secondlab.Models;
 
 public class User {
-    long userId;
-    String login;
-    String password;
-    String email;
+    private long userId;
+    private String login;
+    private String password;
+    private String email;
 
     public User(long userId, String login, String password, String email) {
         this.userId = userId;

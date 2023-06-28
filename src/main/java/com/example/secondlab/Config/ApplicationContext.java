@@ -1,10 +1,18 @@
 package com.example.secondlab.Config;
 
+import com.example.secondlab.Service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.sql.DataSource;
 
@@ -19,6 +27,9 @@ public class ApplicationContext {
 
     @Value("${spring.datasource.driver-class-name}")
     private String driver;
+
+    @Autowired
+    UserService userService;
 
     @Bean
     public DataSource dataSource() {
@@ -35,5 +46,25 @@ public class ApplicationContext {
     @Bean
     public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(dataSource());
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        
+        authenticationProvider.setUserDetailsService(userService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        return authenticationProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
