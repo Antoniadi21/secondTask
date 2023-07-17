@@ -1,28 +1,18 @@
 package com.example.secondlab.Controllers;
 
-import com.example.secondlab.Service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class RegistrationController {
-    UserService userService;
 
-    public RegistrationController(@Autowired UserService userService) {
-        this.userService = userService;
+
+    @GetMapping("/auth/log")
+    public String login() {
+        return "login";
     }
 
-    @GetMapping("/registration")
-    public String registration() {
-        return "registration";
-    }
-
-    @PostMapping("/registration")
+/*    @PostMapping("/registration")
     public String register(@RequestBody String login, @RequestBody String password,
                            @RequestBody String repeatedPassword,
                            @RequestBody String email, Model model) {
@@ -41,5 +31,5 @@ public class RegistrationController {
             userService.save(login, email, password);
             return "login";
         }
-    }
+    }*/
 }

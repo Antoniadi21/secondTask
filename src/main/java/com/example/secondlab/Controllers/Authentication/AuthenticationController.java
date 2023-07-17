@@ -1,29 +1,32 @@
 package com.example.secondlab.Controllers.Authentication;
 
+import com.example.secondlab.Exceptions.AppError;
 import com.example.secondlab.Service.AuthenticationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
-@Controller
+@RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
-    public AuthenticationController(@Autowired AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
+    @GetMapping("/register")
+    public View registration() {
+        ModelAndView modelAndView = new ModelAndView("registration");
+        return modelAndView.getView();
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
+    @PostMapping(value = "/register")
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) throws AppError {
         return ResponseEntity.ok(authenticationService.register(request));
     }
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+    @PostMapping(value = "/authenticate")
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) throws AppError {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 }

@@ -1,12 +1,10 @@
 package com.example.secondlab.Controllers.Authentication;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
 public class AuthenticationResponse {
     private String token;
-
-    public AuthenticationResponse(String token) {
-        this.token = token;
-    }
-
-    public AuthenticationResponse() {
-    }
 }

@@ -1,43 +1,20 @@
 package com.example.secondlab.Service;
 
-import com.example.secondlab.Models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.attribute.UserDefinedFileAttributeView;
-import java.security.Key;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.function.Function;
 
 @Service
 public class JwtService {
-    private static String KEY = null;
-    private static final String PROPERTIES_PATH = Path.of("main").toAbsolutePath() + "/resources/config.properties";
-
-    static {
-        Properties properties = new Properties();
-
-        try (FileInputStream fis = new FileInputStream(PROPERTIES_PATH)) {
-            properties.load(fis);
-
-            KEY = properties.getProperty("jwt.key");
-
-        } catch (IOException e) {
-            //TODO ы
-        }
-    }
+    //@Value("{$jwt.secret}")
+    private static String KEY = "J+z4mSyvSmdM693+W5KoHK1XherPpxXkwvLssknyc0xxmXJoq3CSpDyn7tGVO4yJ";
 
     public String extractUserLogin(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -46,18 +23,10 @@ public class JwtService {
     private Claims extractAllClaims(String token) {
         return Jwts
                 .parserBuilder()
-                .setSigningKey(getSignInKey())
+                .setSigningKey(KEY)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-    }
-
-    private Key getSignInKey() {
-        if (KEY == null) {
-            return null;
-        }
-        byte[] keyBytes = Decoders.BASE64.decode(KEY);
-        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -76,13 +45,8 @@ public class JwtService {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .signWith(SignatureAlgorithm.HS256, KEY)
                 .compact();
-    }
-
-    public boolean isTokenValid(String token, User user) {
-        String login = extractUserLogin(token);
-        return login.equals(user.getLogin()) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {
