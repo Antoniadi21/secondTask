@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 
 @RestController
 @RequestMapping("/auth")
@@ -15,17 +14,19 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @GetMapping("/register")
-    public View registration() {
-        ModelAndView modelAndView = new ModelAndView("registration");
-        return modelAndView.getView();
+    public ModelAndView getRegisterView() {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("registration");
+
+        return mv;
     }
 
-    @PostMapping(value = "/register")
+    @PostMapping( "/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) throws AppError {
         return ResponseEntity.ok(authenticationService.register(request));
     }
 
-    @PostMapping(value = "/authenticate")
+    @PostMapping( "/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) throws AppError {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
